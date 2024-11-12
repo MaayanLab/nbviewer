@@ -21,6 +21,7 @@ WORKDIR /srv/nbviewer
 
 # Copy source tree in
 COPY . /srv/nbviewer
+RUN npm i && invoke bower && invoke less
 RUN python3 setup.py build && \
     python3 -mpip wheel -vv -r requirements.txt . -w /wheels
 
@@ -42,6 +43,7 @@ RUN apt-get update \
 
 COPY --from=builder /wheels /wheels
 RUN python3 -mpip install --no-cache /wheels/*
+COPY --from=builder /srv/nbviewer/nbviewer/static /srv/nbviewer/nbviewer/static
 
 # To change the number of threads use
 # docker run -d -e NBVIEWER_THREADS=4 -p 80:8080 nbviewer
